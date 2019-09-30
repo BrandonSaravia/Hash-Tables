@@ -15,6 +15,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -23,7 +24,7 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
-        return hash(key)
+        return self._hash_mod(key)
 
 
     def _hash_djb2(self, key):
@@ -32,7 +33,11 @@ class HashTable:
 
         OPTIONAL STRETCH: Research and implement DJB2
         '''
-        pass
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+
+        return hash & 0xFFFFFFFF
 
 
     def _hash_mod(self, key):
@@ -51,8 +56,16 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        if self.count >= self.capacity:
+            self.resize()
 
+        hashedkey = self._hash(value)
+
+        for i in range(self.count, hashedkey, -1):
+            self.storage[i] = self.storage[i-1]
+        
+        self.storage[hashedkey] = LinkedPair(key,value)
+        self.count += 1
 
 
     def remove(self, key):
@@ -63,7 +76,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashedkey = self._hash(value)
+        keyfound = False
+        for i in self.storage:
+            if self.storage[i] == hashedkey:
+                self.storage[i] = self.storage[i + 1]
+                keyfound = True
+                self.count -= 1
+            elif keyfound == True:
+                self.storage[i] = self.storage[i + 1]
+            if keyfound == False:
+                return "not found"
 
 
     def retrieve(self, key):
@@ -74,7 +97,10 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        for i in self.storage:
+            if self.storage[i].key == key:
+                return self.storage[i].value
+        return None
 
 
     def resize(self):
@@ -84,7 +110,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
+        for i in range(self.count):
+            new_storage[i] = self.storage[i]
+
+        self.storage = new_storage
+
 
 
 

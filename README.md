@@ -71,6 +71,8 @@ Our array would look something like this:
 
 `3` = `<"d", "dog">  ->  NULL`
 
+print(hash('aardvark') % 4)
+
 Now if we want to find the value stored for "e", we would first find it's hashed index (2), then travel through the linked list until we find the key/value pair with a matching key and return the value.
 
 Note that while searching with a hashed index has time complexity of O(1), searching through a linked list has O(n). This is why sparsely populated hash tables have search/insert/delete of O(1), performance will degrade as they fill up and they can have a worst-case performance of O(n) if every single key happens to hash to the same value.
